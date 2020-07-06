@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
     public static GameController Instance;
 
-    [SerializeField] private List<Player> players;
-    [SerializeField] private float nextLevel;
+    [SerializeField] private int currentLevel = 0;
+
+    private GameObject[] players;
     private bool levelComplete;
 
     private void Awake()
@@ -21,6 +23,12 @@ public class GameController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        DontDestroyOnLoad(this.gameObject);
+    }
+
+    private void Start()
+    {
+        players = GameObject.FindGameObjectsWithTag("Player");
     }
 
     // Update is called once per frame
@@ -28,9 +36,10 @@ public class GameController : MonoBehaviour
     {
         levelComplete = true;
 
-        foreach (Player p in players)
+        foreach (GameObject p in players)
         {
-            if (!p.finishedLevel)
+            Player playerState = p.GetComponent<Player>();
+            if (!playerState.finishedLevel)
             {
                 levelComplete = false;
             }
@@ -38,7 +47,7 @@ public class GameController : MonoBehaviour
 
         if (levelComplete)
         {
-
+            SceneManager.LoadScene(++currentLevel); // Load the next level!
         }
     }
 }
